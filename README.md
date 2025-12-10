@@ -32,3 +32,5 @@ Cклонировать репозиторий, вполнив команду gi
 # Документация
 
 - [План тестирования]( ./docs/plan.md)
+- 
+[![Java CI with Gradle](https://github.com/ArtemZadunaev/AQA_Course_Project/actions/workflows/gradle.yml/badge.svg)](https://github.com/ArtemZadunaev/AQA_Course_Project/actions/workflows/gradle.yml)
