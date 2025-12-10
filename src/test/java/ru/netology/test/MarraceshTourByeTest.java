@@ -1,5 +1,7 @@
 package ru.netology.test;
 
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.*;
 import ru.netology.data.DataHelper;
 import ru.netology.data.SQLHelper;
@@ -11,14 +13,17 @@ import static com.codeborne.selenide.Selenide.open;
 
 public class MarraceshTourByeTest {
     @BeforeEach
-    void setup() {
+    void setupAll() {
         open("http://localhost:8080");
+        SelenideLogger.addListener("allure", new AllureSelenide());
     }
 
-    //    @AfterAll
-//    static void clean() {
-//        SQLHelper.cleanDB();
-    // }
+    @AfterAll
+    static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
+        SQLHelper.cleanDB();
+    }
+
     @Test
     @DisplayName("TC‑001")
     public void shouldByeWithValidCustomerWithDebitCard() {
@@ -53,7 +58,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithInvalidShortCardNumber();
         page.debitCardBye(card);
-        page.checkErrorCardNumField();
+        page.checkErrorField("Номер карты", "Неверный формат");
 
     }
 
@@ -74,7 +79,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithInvalidCharsInCardNumber();
         page.debitCardBye(card);
-        page.checkErrorCardNumField();
+        page.checkErrorField("Номер карты", "Неверный формат");
     }
 
     @Test
@@ -84,7 +89,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithInvalidMonth00();
         page.debitCardBye(card);
-        page.checkErrorCardMonthField();
+        page.checkErrorField("Месяц", "Неверно указан срок действия карты");
     }
 
     @Test
@@ -94,7 +99,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithInvalidMonth13();
         page.debitCardBye(card);
-        page.checkErrorCardMonthField();
+        page.checkErrorField("Месяц", "Неверно указан срок действия карты");
     }
 
     @Test
@@ -104,7 +109,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithInvalidCharsInMonth();
         page.debitCardBye(card);
-        page.checkErrorEmptyCardMonthField();
+        page.checkErrorField("Месяц", "Неверный формат");
     }
 
     @Test
@@ -114,7 +119,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithInvalidYearInPast();
         page.debitCardBye(card);
-        page.checkErrorCardExpiredYearField();
+        page.checkErrorField("Год", "Истёк срок действия карты");
     }
 
     @Test
@@ -124,7 +129,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithInvalidYearInFuture();
         page.debitCardBye(card);
-        page.checkErrorCardYearField();
+        page.checkErrorField("Год", "Неверно указан срок действия карты");
     }
 
     @Test
@@ -134,7 +139,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithInvalidName();
         page.debitCardBye(card);
-        page.checkErrorCardNameField();
+        page.checkErrorField("Владелец", "Неверный формат");
     }
 
     @Test
@@ -144,7 +149,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithInvalidNameWithNums();
         page.debitCardBye(card);
-        page.checkErrorCardNameField();
+        page.checkErrorField("Владелец", "Неверный формат");
     }
 
     @Test
@@ -154,7 +159,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithInvalidShortCVC();
         page.debitCardBye(card);
-        page.checkErrorCardCVCField();
+        page.checkErrorField("CVC/CVV", "Неверный формат");
     }
 
     @Test
@@ -175,7 +180,7 @@ public class MarraceshTourByeTest {
         var card = DataHelper.getUserWithInvalidNumsInCVC();
         page.debitCardBye(card);
         Assertions.assertEquals(card.getCvc().substring(0, 2), page.getValueInCVCField());
-        page.checkErrorCardCVCField();
+        page.checkErrorField("CVC/CVV", "Неверный формат");
     }
 
     @Test
@@ -185,7 +190,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithEmptyCardField();
         page.debitCardBye(card);
-        page.checkErrorCardNumField();
+        page.checkErrorField("Номер карты", "Неверный формат");
     }
 
     @Test
@@ -195,7 +200,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithEmptyMonthField();
         page.debitCardBye(card);
-        page.checkErrorEmptyCardMonthField();
+        page.checkErrorField("Месяц", "Неверный формат");
     }
 
     @Test
@@ -205,7 +210,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithEmptyYearField();
         page.debitCardBye(card);
-        page.checkErrorEmptyCardYearField();
+        page.checkErrorField("Год", "Неверный формат");
     }
 
     @Test
@@ -215,7 +220,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithEmptyNameField();
         page.debitCardBye(card);
-        page.checkErrorEmptyCardNameField();
+        page.checkErrorField("Владелец", "Поле обязательно для заполнения");
 
     }
 
@@ -226,7 +231,7 @@ public class MarraceshTourByeTest {
         page.byeButtonClick();
         var card = DataHelper.getUserWithEmptyCVCField();
         page.debitCardBye(card);
-        page.checkErrorCardCVCField();
+        page.checkErrorField("CVC/CVV", "Неверный формат");
     }
 
 }

@@ -2,9 +2,7 @@ package ru.netology.page;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.conditions.Visible;
 import ru.netology.data.DataHelper;
 
 import java.time.Duration;
@@ -17,17 +15,23 @@ public class MarraceshTourByePage {
     private ElementsCollection buttons = $$("button.button");
     private SelenideElement succesNotification = $(".notification_status_ok");
     private SelenideElement errorNotification = $(".notification_status_error");
+    private ElementsCollection errorFieldState = $$(".input_invalid");
+    private SelenideElement numField = $$("span.input:has(input)").find(Condition.text("Номер карты")).$("input");
+    private SelenideElement monthField = $$("span.input:has(input)").find(Condition.text("Месяц")).$("input");
+    private SelenideElement yearField = $$("span.input:has(input)").find(Condition.text("Год")).$("input");
+    private SelenideElement nameField = $$("span.input:has(input)").find(Condition.text("Владелец")).$("input");
+    private SelenideElement cvcField = $$("span.input:has(input)").find(Condition.text("CVC/CVV")).$("input");
 
     public MarraceshTourByePage() {
         page.shouldBe(Condition.visible);
     }
 
     public void debitCardBye(DataHelper.CardData card) {
-        getCardNumField().setValue(card.getNumber());
-        getMonthField().setValue(card.getMonth());
-        getYearField().setValue(card.getYear());
-        getUserNameField().setValue(card.getOwner());
-        getCVCField().setValue(card.getCvc());
+        numField.setValue(card.getNumber());
+        monthField.setValue(card.getMonth());
+        yearField.setValue(card.getYear());
+        nameField.setValue(card.getOwner());
+        cvcField.setValue(card.getCvc());
         actionButtonClick();
     }
 
@@ -41,72 +45,12 @@ public class MarraceshTourByePage {
         errorNotification.shouldHave(Condition.text("Ошибка! Банк отказал в проведении операции."));
     }
 
-    public void checkErrorCardNumField() {
-        $$(".input_invalid").find(Condition.text("Номер карты")).shouldHave(Condition.text("Неверный формат"));
-
-    }
-
-    public void checkErrorCardMonthField() {
-        $$(".input_invalid").find(Condition.text("Месяц")).shouldHave(Condition.text("Неверно указан срок действия карты"));
-    }
-
-    public void checkErrorEmptyCardMonthField() {
-        $$(".input_invalid").find(Condition.text("Месяц")).shouldHave(Condition.text("Неверный формат"));
-    }
-
-    public void checkErrorCardYearField() {
-        $$(".input_invalid").find(Condition.text("Год")).shouldHave(Condition.text("Неверно указан срок действия карты"));
-    }
-
-    public void checkErrorEmptyCardYearField() {
-        $$(".input_invalid").find(Condition.text("Год")).shouldHave(Condition.text("Неверный формат"));
-    }
-
-    public void checkErrorCardExpiredYearField() {
-        $$(".input_invalid").find(Condition.text("Год")).shouldHave(Condition.text("Истёк срок действия карты"));
-    }
-
-    public void checkErrorCardNameField() {
-        $$(".input_invalid").find(Condition.text("Владелец")).shouldHave(Condition.text("Неверный формат"));
-    }
-
-    public void checkErrorCardCVCField() {
-        $$(".input_invalid").find(Condition.text("CVC/CVV")).shouldHave(Condition.text("Неверный формат"));
-    }
-
-    public void checkErrorEmptyCardNameField() {
-        $$(".input_invalid").find(Condition.text("Владелец")).shouldHave(Condition.text("Поле обязательно для заполнения"));
-    }
-
-    private SelenideElement getCardNumField() {
-        var field = $$("span.input").find(Condition.text("Номер карты"));
-        return field.$("input");
-
-    }
-
-    private SelenideElement getMonthField() {
-        var field = $$("span.input").find(Condition.text("Месяц"));
-        return field.$("input");
-    }
-
-    private SelenideElement getYearField() {
-        var field = $$("span.input").find(Condition.text("Год"));
-        return field.$("input");
-    }
-
-    private SelenideElement getUserNameField() {
-        var field = $$("span.input").find(Condition.text("Владелец"));
-        return field.$("input");
+    public void checkErrorField(String fieldName, String errorText) {
+        errorFieldState.find(Condition.text(fieldName)).shouldHave(Condition.text(errorText));
     }
 
     public String getValueInCVCField() {
-        var field = getCVCField();
-        return field.getValue();
-    }
-
-    private SelenideElement getCVCField() {
-        var field = $$("span.input").find(Condition.text("CVC/CVV"));
-        return field.$("input");
+        return cvcField.getValue();
     }
 
     private void actionButtonClick() {
