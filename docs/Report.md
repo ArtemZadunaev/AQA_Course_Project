@@ -23,8 +23,8 @@
 **Визуализация результатов:**  
 Ниже представлены сводные отчёты по тестированию (Allure Report):
 
-- [Allure Report 1](docs/AllureReport-1.png)
-- [Allure Report 2](docs/AllureReport-2.png)
+- ![img.png](AllureReport-1.png)
+- ![img.png](AllureReport-2.png)
 
 ## 4. Выявленные дефекты
 
